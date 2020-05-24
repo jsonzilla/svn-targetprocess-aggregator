@@ -39,6 +39,10 @@ class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
     users.filter(_.email === email).result.headOption
   }
 
+  def insert(us: Seq[User]) = db.run {
+    users ++= us
+  }
+
   def insert(email: String, password: String, name: String): Future[Option[User]] = db.run {
     (users += User(email, password, name, emailConfirmed = false, active = false)) andThen
       users.filter(_.email === email).result.headOption
@@ -65,10 +69,14 @@ class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
     } yield i
   }
 
-  def delete(id: Long): Future[Unit] =
+  def delete(id: Long) =
     db.run(users.filter(_.id === id).delete).map(_ => ())
 
   def list: Future[Seq[User]] = db.run {
     users.sortBy(_.name).result
+  }
+
+  def drop() = db.run {
+    users.delete
   }
 }

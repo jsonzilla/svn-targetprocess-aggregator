@@ -77,6 +77,7 @@ class ProcessTargetConnector(t: TaskConnector) extends TaskProcessConnector {
     treeTaskCollect(ids, field, Seq(), Seq())
   }
 
+  @scala.annotation.tailrec
   private def treeTaskCollect(ids: Seq[Long], field: String, idAcc: Seq[Long], res: Seq[TaskWithCustom]): Seq[TaskWithCustom] =
     if (ids.isEmpty) res
     else {

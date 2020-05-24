@@ -1,6 +1,6 @@
 package dao
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import models._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -10,26 +10,27 @@ import scala.concurrent.{ExecutionContext, Future}
 trait CommitTaskComponent extends CommitComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
   import profile.api._
 
-  class CommitTasksTable(tag: Tag, suffix: DatabaseSuffix) extends Table[CommitTasks](tag, suffix.suffix + "COMMITTASKS") {
+  class CommitTasksTable(tag: Tag) extends Table[CommitTasks](tag,"COMMITTASKS") {
     def taskId: Rep[Long] = column[Long]("task_id")
     def commitId: Rep[Long] = column[Long]("commit_id")
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
     def * = (taskId, commitId, id) <> ((CommitTasks.apply _).tupled, CommitTasks.unapply)
-    def commit = foreignKey("commit_fk", commitId, TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix)))(_.id, onDelete = ForeignKeyAction.Cascade)
+    def commit = foreignKey("commit_fk", commitId, TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag)))(_.id, onDelete = ForeignKeyAction.Cascade)
   }
 }
 
+@Singleton
 class CommitTaskDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
   extends CommitTaskComponent
   with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
-  def insert(entries: Seq[CommitTasks], suffix: DatabaseSuffix): Future[Seq[Int]] = db.run {
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
+  val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag))
+  val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag))
 
+  def insert(entries: Seq[CommitTasks]): Future[Seq[Int]] = db.run {
     def updateInsert(ct: CommitTasks, entryId: Option[Long], commitId: Option[Long]) =
       (entryId, commitId) match {
         case (Some(id), Some(coId)) => commitTasks.insertOrUpdate(ct.copy(commitId = coId, id = id))
@@ -50,13 +51,15 @@ class CommitTaskDAO @Inject() (protected val dbConfigProvider: DatabaseConfigPro
     DBIO.sequence(entries.map(tryInsert)).transactionally
   }
 
-  def list(suffix: DatabaseSuffix): Future[Seq[CommitTasks]] = db run {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
+  def list(): Future[Seq[CommitTasks]] = db run {
     commitTasks.sortBy(_.id).result
   }
 
-  def info(suffix: DatabaseSuffix, id: Long): Future[Seq[CommitTasks]] = db run {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
+  def info(id: Long): Future[Seq[CommitTasks]] = db run {
     commitTasks.filter(_.id === id).sortBy(_.id).result
+  }
+
+  def drop() = db.run {
+    commitTasks.delete
   }
 }

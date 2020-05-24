@@ -12,7 +12,6 @@ package controllers
 import api.ApiController
 import javax.inject._
 import dao._
-import models.DatabaseSuffix
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.Langs
 import play.api.mvc._
@@ -24,15 +23,15 @@ class CustomFieldsController @Inject()
 (implicit ec: ExecutionContext)
   extends ApiController(dbc, l, mcc)  {
 
-  def list(suffix: DatabaseSuffix): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.list(suffix))
+  def list(): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.list())
   }
 
-  def listField(suffix: DatabaseSuffix, field: String): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.listField(suffix, field))
+  def listField(field: String): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.listField(field))
   }
 
-  def info(suffix: DatabaseSuffix, id: Long): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.info(suffix, id))
+  def info(id: Long): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.info(id))
   }
 }

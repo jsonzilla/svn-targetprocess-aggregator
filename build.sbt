@@ -1,7 +1,6 @@
 enablePlugins(SwaggerPlugin)
 enablePlugins(PlayScala)
 enablePlugins(JavaServerAppPackaging)
-// enablePlugins(WindowsPlugin) uncomment to generate with windows:packegeBin
 
 lazy val root = (project in file(".")).settings(
     inThisBuild(List(
@@ -41,8 +40,6 @@ packageDescription := """The Hand Windows MSI."""
 wixProductId := "ce07be71-510d-414a-92d4-dff47631848a"
 wixProductUpgradeId := "4552fb0e-e257-4dbd-9ecb-dba9dbacf424"
 
-routesImport += "models.DatabaseSuffix"
-routesImport += "models.QueryMagic"
 routesImport += "models.QueryLocalDate"
 
 swaggerDomainNameSpaces := Seq("io.github.0um.models")

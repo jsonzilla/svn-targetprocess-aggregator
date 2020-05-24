@@ -1,5 +1,4 @@
 import dao.BootDAO
-import models.DatabaseSuffix
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -18,10 +17,5 @@ object ApplicationFixture {
   def initializeWithData() = {
     daoBootstrap.createSchemas()
     fixture.populate()
-  }
-
-  def initializeWithData(suffix: DatabaseSuffix) = {
-    daoBootstrap.createSchemas(suffix)
-    fixture.populate(suffix)
   }
 }

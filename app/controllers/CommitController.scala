@@ -15,7 +15,7 @@ import java.time.LocalTime
 import api.ApiController
 import javax.inject._
 import dao.CommitDAO
-import models.{DatabaseSuffix, QueryLocalDate}
+import models.QueryLocalDate
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.Langs
 import play.api.mvc._
@@ -27,21 +27,21 @@ class CommitController @Inject()
 (implicit ec: ExecutionContext)
   extends ApiController(dbc, l, mcc)  {
 
-  def list(suffix: DatabaseSuffix): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.list(suffix))
+  def list(): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.list())
   }
 
-  def info(suffix: DatabaseSuffix, id: Long): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.info(suffix, id))
+  def info(id: Long): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.info(id))
   }
 
-  def infoRevision(suffix: DatabaseSuffix, revision: Long): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.infoRevision(suffix, revision))
+  def infoRevision(revision: Long): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.infoRevision(revision))
   }
 
-  def infoDate(suffix: DatabaseSuffix, from: QueryLocalDate, to: QueryLocalDate): Action[Unit] = ApiAction { implicit request =>
+  def infoDate(from: QueryLocalDate, to: QueryLocalDate): Action[Unit] = ApiAction { implicit request =>
     val fromTime = Timestamp.valueOf(from.queryDate.atTime(LocalTime.MIDNIGHT))
     val toTime = Timestamp.valueOf(to.queryDate.atTime(LocalTime.MIDNIGHT))
-    maybeSeq(dao.infoDate(suffix, fromTime, toTime))
+    maybeSeq(dao.infoDate(fromTime, toTime))
   }
 }

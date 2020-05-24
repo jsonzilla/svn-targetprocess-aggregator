@@ -9,8 +9,8 @@ import play.api.mvc.PathBindable
 import scala.util.{Failure, Success, Try}
 
 class QueryLocalDate(val queryDate: LocalDate) {
-  def fromTime = Timestamp.valueOf(queryDate.atTime(LocalTime.MIN))
-  def toTime = Timestamp.valueOf(queryDate.atTime(LocalTime.MAX))
+  def fromTime: Timestamp = Timestamp.valueOf(queryDate.atTime(LocalTime.MIN))
+  def toTime: Timestamp = Timestamp.valueOf(queryDate.atTime(LocalTime.MAX))
 }
 
 object QueryLocalDate {

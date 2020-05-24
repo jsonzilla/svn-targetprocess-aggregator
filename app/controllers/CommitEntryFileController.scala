@@ -12,7 +12,6 @@ package controllers
 import api.ApiController
 import javax.inject._
 import dao._
-import models.DatabaseSuffix
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.Langs
 import play.api.mvc._
@@ -24,11 +23,11 @@ class CommitEntryFileController @Inject()
 (implicit ec: ExecutionContext)
   extends ApiController(dbc, l, mcc)  {
 
-  def list(suffix: DatabaseSuffix): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.list(suffix))
+  def list(): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.list())
   }
 
-  def info(suffix: DatabaseSuffix, id: Long): Action[Unit] = ApiAction { implicit request =>
-    maybeSeq(dao.info(suffix, id))
+  def info(id: Long): Action[Unit] = ApiAction { implicit request =>
+    maybeSeq(dao.info(id))
   }
 }

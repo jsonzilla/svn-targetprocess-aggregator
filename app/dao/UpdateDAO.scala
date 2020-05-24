@@ -12,10 +12,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) {
 
-  private def loadSvnRepository(repoConfName: String) = {
-    lazy val suffix = RepoConf.suffix(repoConfName)
-    lazy val taskConf = RepoConf.taskParser(repoConfName)
-    lazy val scmConf = RepoConf.scm(repoConfName)
+  private def loadSvnRepository() = {
+    lazy val taskConf = RepoConf.taskParser()
+    lazy val scmConf = RepoConf.scm()
 
     implicit val parser: TaskParser = TaskParserOctothorpe(taskConf.pattern, taskConf.split, taskConf.separator)
 
@@ -27,31 +26,30 @@ class UpdateDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     val taskProcessor = ProcessTargetConnector(taskConnector)
 
     repository.flatMap { repo =>
-      Future.successful(new ScmRepositoryData[SVNLogEntry](dbConfigProvider, repo, extractor, taskProcessor, suffix))
+      Future.successful(new ScmRepositoryData[SVNLogEntry](dbConfigProvider, repo, extractor, taskProcessor))
     }
   }
 
-  private def updateRepositoryAuto(confName: String) = {
-    val repository = loadSvnRepository(confName)
+  private def updateRepositoryAuto() = {
+    val repository = loadSvnRepository()
     repository.flatMap(rep => rep.updateAuto())
   }
 
-  private def updateRepositoryRange(confName: String, from: Long, to: Long) = {
-    val repository = loadSvnRepository(confName)
+  private def updateRepositoryRange(from: Long, to: Long) = {
+    val repository = loadSvnRepository()
     repository.flatMap(rep => rep.updateRange(FixedRange(from, to)))
   }
 
-  def update(suffix: DatabaseSuffix, from: Option[Long], to: Option[Long]): Future[Seq[Int]] = {
-    updateRepositoryRange(suffix.suffix, from.getOrElse(-1), to.getOrElse(-1))
+  def update(from: Option[Long], to: Option[Long]): Future[Seq[Int]] = {
+    updateRepositoryRange(from.getOrElse(-1), to.getOrElse(-1))
   }
 
   def updateAll(): Future[Seq[Int]] = {
-    val repositories = RepoConf.repos().map(updateRepositoryAuto)
-    Future.sequence(repositories).map(_.flatten)
+    updateRepositoryAuto
   }
 
-  def updateCustomFields(suffix: DatabaseSuffix, field: String, from: Option[Long], to: Option[Long]): Future[Seq[Int]] = {
-    val repository = loadSvnRepository(suffix.suffix)
+  def updateCustomFields(field: String, from: Option[Long], to: Option[Long]): Future[Seq[Int]] = {
+    val repository = loadSvnRepository()
     repository.flatMap(rep => rep.updateCustomFields(field, from.getOrElse(-1), to.getOrElse(-1)))
   }
 
