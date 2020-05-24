@@ -16,18 +16,19 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
   with CommitTaskComponent
   with CustomFieldsComponent
   with TaskComponent
-  with LocFileComponent
   with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
-  def filesBugsCounter(suffix: DatabaseSuffix): Future[Seq[(String, Int)]] = db.run {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
-    val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag, suffix))
-    val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag, suffix))
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
+  val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag))
+  val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag))
+  val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag))
+  val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag))
+  val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag))
+  val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag))
+  val customFields = TableQuery[CustomFieldsTable]((tag: Tag) => new CustomFieldsTable(tag))
 
+  def filesBugsCounter(): Future[Seq[(String, Int)]] = db.run {
     val bugs = for {
       co <- commits
       cf <- commitsFiles if cf.revisionId === co.id
@@ -44,12 +45,7 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     countBugs.result.transactionally
   }
 
-  def fileAuthorCommitsCounter(author: String, suffix: DatabaseSuffix): Future[Seq[(String, Int)]] = db.run {
-    val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag, suffix))
-    val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag, suffix))
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
-
+  def fileAuthorCommitsCounter(author: String): Future[Seq[(String, Int)]] = db.run {
     val commitsCounts = for {
       ai <- authors if ai.author === author
       co <- commits if co.authorId === ai.id
@@ -65,14 +61,7 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     countCommits.result.transactionally
   }
 
-  def fileAuthorCommitsBugsCounter(author: String, suffix: DatabaseSuffix): Future[Seq[(String, Int)]] = db.run {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
-    val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag, suffix))
-    val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag, suffix))
-    val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag, suffix))
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
-
+  def fileAuthorCommitsBugsCounter(author: String): Future[Seq[(String, Int)]] = db.run {
     val commitsBugs = for {
       ai <- authors if ai.author === author
       co <- commits if co.authorId === ai.id
@@ -90,22 +79,21 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     countCommits.result.transactionally
   }
 
-  def filterMovedFiles(revisionId: Long, suffix: DatabaseSuffix): Future[Seq[CommitEntryFile]] = db.run {
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
+  def filterMovedFiles(revisionId: Long): Future[Seq[CommitEntryFile]] = db.run {
+    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag))
     val files = for {
       cf <- commitsFiles if cf.revisionId === revisionId && cf.copyPathId >= 1L
     } yield cf
     files.result.transactionally
   }
 
-  def authorsNames(suffix: DatabaseSuffix): Future[Seq[String]] = db.run {
-    val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag, suffix))
+  def authorsNames(): Future[Seq[String]] = db.run {
+    val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag))
     authors.map(_.author).result
   }
 
-  private def bugTasks(suffix: DatabaseSuffix, fieldValue: String) = {
-    val customFields = TableQuery[CustomFieldsTable]((tag: Tag) => new CustomFieldsTable(tag, suffix))
-    val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag, suffix))
+  private def bugTasks(fieldValue: String) = {
+
     val query = for {
       cs <- customFields if cs.field_value === fieldValue
       taskParents <- tasks if cs.taskId === taskParents.taskId
@@ -116,9 +104,7 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     query.distinct
   }
 
-  private def tasksByField(suffix: DatabaseSuffix, fieldValue: String) = {
-    val customFields = TableQuery[CustomFieldsTable]((tag: Tag) => new CustomFieldsTable(tag, suffix))
-    val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag, suffix))
+  private def tasksByField(fieldValue: String) = {
     val query = for {
       cs <- customFields if cs.field_value === fieldValue
       taskParents <- tasks if cs.taskId === taskParents.taskId
@@ -128,70 +114,44 @@ class ReportDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     query.distinct
   }
 
-  private def commitDateRange(suffix: DatabaseSuffix, initialTime: Timestamp, finalTime: Timestamp) = {
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
+  private def commitDateRange(initialTime: Timestamp, finalTime: Timestamp) = {
     for {
       co <- commits if co.timestamp >= initialTime && co.timestamp <= finalTime
     } yield co.id
   }
 
-  private def commitFiles(suffix: DatabaseSuffix, id : Rep[Long]) = {
-    val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag, suffix))
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
+  private def commitFiles(id : Rep[Long]) = {
     for {
       cf <- commitsFiles if cf.revisionId === id
       fi <- files if fi.id === cf.pathId
     } yield fi
   }
 
-  private def commitsByCustomFiled(suffix: DatabaseSuffix, fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) = {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
+  private def commitsByCustomFiled(fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) = {
     val query = for {
-      taskId <- if (fieldValue.contains("Issue")) bugTasks(suffix, fieldValue) else tasksByField(suffix, fieldValue)
-      commitId <- commitDateRange(suffix, initialTime, finalTime)
+      taskId <- if (fieldValue.contains("Issue")) bugTasks(fieldValue) else tasksByField(fieldValue)
+      commitId <- commitDateRange(initialTime, finalTime)
       ct <- commitTasks if ct.commitId === commitId && ct.taskId === taskId
     } yield ct.commitId
     query.distinct
   }
 
-  private def filesByCustomFiled(suffix: DatabaseSuffix, fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) = {
+  private def filesByCustomFiled(fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) = {
     for {
-      ct <- commitsByCustomFiled(suffix, fieldValue, initialTime, finalTime)
-      fi <- commitFiles(suffix, ct)
+      ct <- commitsByCustomFiled(fieldValue, initialTime, finalTime)
+      fi <- commitFiles(ct)
     } yield fi
   }
 
-  def countCommitByCustomField(suffix: DatabaseSuffix, fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) : Future[Seq[(String, Int)]] = db.run {
-    val countFiles = filesByCustomFiled(suffix, fieldValue, initialTime, finalTime)
+  def countCommitByCustomField(fieldValue: String, initialTime: Timestamp, finalTime: Timestamp) : Future[Seq[(String, Int)]] = db.run {
+    val countFiles = filesByCustomFiled(fieldValue, initialTime, finalTime)
       .groupBy(result => result.path)
       .map { case (path, group) => (path, group.length) }
       .sortBy{ case (_, length) => length }
     countFiles.result.transactionally
   }
 
-  def countCommitLocByCustomField(suffix: DatabaseSuffix, fieldValue: String, initialTime: Timestamp, finalTime: Timestamp): Future[Seq[(String, Long, Int)]] = db.run {
-    val fileLineCounter = TableQuery[LocFilesTable]((tag: Tag) => new LocFilesTable(tag, suffix))
-
-    def countCommitTask() = for {
-      fi <- filesByCustomFiled(suffix, fieldValue, initialTime, finalTime)
-      lc <- fileLineCounter if lc.fileRef === fi.id
-    } yield (fi.path, lc.count)
-
-    val countCommits = countCommitTask()
-      .groupBy(result => result)
-      .map{ case ((path, count), group) => (path, count, group.length) }
-      .sortBy{ case (_, _, length) => length }
-    countCommits.result.transactionally
-  }
-
-  def dump(suffix: DatabaseSuffix, initialTime: Timestamp, finalTime: Timestamp) = db.run {
-    val commitTasks = TableQuery[CommitTasksTable]((tag: Tag) => new CommitTasksTable(tag, suffix))
-    val tasks = TableQuery[TaskTable]((tag: Tag) => new TaskTable(tag, suffix))
-    val files = TableQuery[EntryFilesTable]((tag: Tag) => new EntryFilesTable(tag, suffix))
-    val authors = TableQuery[AuthorsTable]((tag: Tag) => new AuthorsTable(tag, suffix))
-    val commits = TableQuery[CommitTable]((tag: Tag) => new CommitTable(tag, suffix))
-    val commitsFiles = TableQuery[CommitEntryFileTable]((tag: Tag) => new CommitEntryFileTable(tag, suffix))
-
+  def dump(initialTime: Timestamp, finalTime: Timestamp): Future[Seq[(Long, String, Long, Option[String], Option[Timestamp], Long, String, Option[Int], Long, Option[String], Option[Long], Option[Double])]] = db.run {
     val dumpData = for {
       ai <- authors
       co <- commits if co.authorId === ai.id && co.timestamp >= initialTime && co.timestamp <= finalTime

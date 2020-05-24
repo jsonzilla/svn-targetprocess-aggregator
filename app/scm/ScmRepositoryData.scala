@@ -13,7 +13,7 @@ package scm
 
 import dao._
 import javax.inject.Inject
-import models.{DatabaseSuffix, FixedRange}
+import models.FixedRange
 import tasks.TaskProcessConnector
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -25,7 +25,7 @@ class ScmRepositoryData[T] @Inject()
  repository: ScmConnector[T],
  extractor: ScmExtractor[T],
  taskProcessor: TaskProcessConnector,
- suffix: DatabaseSuffix)
+ )
 {
   implicit val context: ExecutionContextExecutor = scala.concurrent.ExecutionContext.fromExecutor(null)
   lazy val daoTasks = new TaskDAO(dbConfigProvider)
@@ -62,7 +62,7 @@ class ScmRepositoryData[T] @Inject()
   }
 
   def doStep(from: Long, to: Long, step: Long): Future[Seq[Int]] = {
-    HandLogger.debug(s"step ${from}-${to}")
+    HandLogger.debug(s"step $from-$to")
     if (((to - from) / step) <= 0L) {
       updateInSvm(repository.log(from, to)).flatMap( _ => Future(Seq()))
     } else {
@@ -73,7 +73,7 @@ class ScmRepositoryData[T] @Inject()
   def updateAuto(): Future[Seq[Int]] =
     repository.latestId match {
       case Some(last) => daoCommits
-        .actionLatestRevision(suffix)
+        .actionLatestRevision()
         .flatMap(lastId => updateRange(calculateRangeLimit(lastId.getOrElse(-1), last)))
       case None => Future(Seq())
     }
@@ -81,25 +81,25 @@ class ScmRepositoryData[T] @Inject()
   def updateTasks(data: Seq[T]): Future[Seq[Int]] = {
    val twc = taskProcessor.processRange(extractor.extractTasks(data), "Request Type")
    for {
-      _ <- daoTasks.insert(twc.map(_.task), suffix)
-      c <- daoCustomFields.insert(twc.flatMap(_.custom), suffix)
+      _ <- daoTasks.insert(twc.map(_.task))
+      c <- daoCustomFields.insert(twc.flatMap(_.custom))
    } yield c
   }
 
   def updateInSvm(data: Seq[T]): Future[Seq[Int]] =
     for {
-      _ <- daoAuthors.insert(extractor.extractAuthors(data), suffix)
-      _ <- daoCommits.insert(extractor.extractCommits(data), suffix)
-      _ <- daoFiles.insert(extractor.extractFiles(data), suffix)
-      _ <- daoCommitTasks.insert(extractor.extractCommitsTasks(data), suffix)
-      c <- daoCommitFiles.insert(extractor.extractCommitsFiles(data), suffix)
+      _ <- daoAuthors.insert(extractor.extractAuthors(data))
+      _ <- daoCommits.insert(extractor.extractCommits(data))
+      _ <- daoFiles.insert(extractor.extractFiles(data))
+      _ <- daoCommitTasks.insert(extractor.extractCommitsTasks(data))
+      c <- daoCommitFiles.insert(extractor.extractCommitsFiles(data))
     } yield c
 
   def updateCustomFields(field: String, startId: Long, endId: Long): Future[Seq[Int]] = {
     lazy val data = repository.log(startId, endId)
     val insertAll: Future[Seq[Int]] =
       for {
-        c <- daoCustomFields.insert(extractor.extractTasks(data).flatMap(taskProcessor.processCustomFields(_, field)), suffix)
+        c <- daoCustomFields.insert(extractor.extractTasks(data).flatMap(taskProcessor.processCustomFields(_, field)))
       } yield c
     insertAll
   }

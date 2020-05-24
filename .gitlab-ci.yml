@@ -4,8 +4,7 @@ image: "hseeberger/scala-sbt:8u141-jdk_2.12.3_1.0.2"
 
 variables:
   SBT_OPTS: "-Dsbt.global.base=sbt-cache/sbtboot -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy"
-  COURSIER_CACHE: sbt-cache/coursier #only needed if you use coursier
-
+  #COURSIER_CACHE: sbt-cache/coursier #only needed if you use coursier
 
 cache:
   # if you want to have a separate cache per branch, uncomment the next line
@@ -16,7 +15,7 @@ cache:
     - "sbt-cache/boot"
     - "sbt-cache/sbtboot"
     - "sbt-cache/target"
-    - "sbt-cache/coursier" #only needed if you use coursier
+    #- "sbt-cache/coursier" #only needed if you use coursier
 
 stages:
   - test

@@ -12,7 +12,6 @@ package controllers
 import api.ApiController
 import javax.inject._
 import dao._
-import models.DatabaseSuffix
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.Langs
 import play.api.mvc._
@@ -30,14 +29,14 @@ class UpdateController @Inject() (override val dbc: DatabaseConfigProvider, dao:
     }
   }
 
-  def update(suffix: DatabaseSuffix): Action[Unit] = ApiAction { implicit request =>
-    dao.update(suffix, None, None).flatMap { _ =>
+  def update(): Action[Unit] = ApiAction { implicit request =>
+    dao.update(None, None).flatMap { _ =>
       HandLogger.debug("Update Ok")
       accepted() }
   }
 
-  def updateCustomFields(suffix: DatabaseSuffix, field: String): Action[Unit] = ApiAction { implicit request =>
-    dao.updateCustomFields(suffix, field, None, None).flatMap { _ =>
+  def updateCustomFields(field: String): Action[Unit] = ApiAction { implicit request =>
+    dao.updateCustomFields(field, None, None).flatMap { _ =>
       HandLogger.debug("Update Ok")
       accepted() }
   }

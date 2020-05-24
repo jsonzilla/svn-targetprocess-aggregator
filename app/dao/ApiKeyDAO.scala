@@ -32,6 +32,14 @@ class ApiKeyDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     apiKeys.filter(_.apiKey === apiKey).map(_.active).result.headOption
   }
 
+  def insert(keys: Seq[ApiKey]) = db.run {
+    apiKeys ++= keys
+  }
+
   def delete(id: Long): Future[Unit] =
     db.run(apiKeys.filter(_.id === id).delete).map(_ => ())
+
+  def drop() = db.run {
+    apiKeys.delete
+  }
 }

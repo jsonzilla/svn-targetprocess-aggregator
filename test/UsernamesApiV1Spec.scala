@@ -9,9 +9,10 @@ class UsernamesApiV1Spec extends ApiSpecification {
       val result: Future[Result] = routeGET(
         "/api/v1/usernames")
       status(result) must equalTo(OK)
-      val s = contentAsString(result)
-      s must beEqualTo(
-        s"""[{"id":1,"name":"User1"},{"id":2,"name":"User2"},{"id":3,"name":"User3"}]""").ignoreSpace
+      val json = contentAsJson(result)
+
+      val name1 = (json \ 0 \ "name").as[String]
+      name1 must beEqualTo("User 1")
     }
   }
 }

@@ -8,47 +8,44 @@ POST	/api/v1/signout						controllers.AuthController.signOut
 POST	/api/v1/signup						controllers.AuthController.signUp
 
 # AUTHORS
-GET     /api/v1/:suffix/authors             controllers.AuthorController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/authors/:id         controllers.AuthorController.info(suffix: DatabaseSuffix, id: Long)
-GET     /api/v1/:suffix/authors/bugs/:author   controllers.ReportController.getAuthorBugs(author: String, suffix: DatabaseSuffix)
+GET     /api/v1/authors             controllers.AuthorController.list()
+GET     /api/v1/authors/:id         controllers.AuthorController.info(id: Long)
+GET     /api/v1/authors/bugs/:author   controllers.ReportController.getAuthorBugs(author: String)
 
 #COMMITS
-GET     /api/v1/:suffix/commits             controllers.CommitController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/commits/:id         controllers.CommitController.info(suffix: DatabaseSuffix, id: Long)
-GET     /api/v1/:suffix/commits/revision/:revision   controllers.CommitController.infoRevision(suffix: DatabaseSuffix, revision: Long)
-GET     /api/v1/:suffix/commits/:from/to/:to   controllers.CommitController.infoDate(suffix: DatabaseSuffix, from: QueryLocalDate, to: QueryLocalDate)
-GET     /api/v1/:suffix/commits/custom/:customField/:fromTime/to/:toTime/csv controllers.ReportController.listCommitsCustomFieldCsv(suffix: DatabaseSuffix, customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
-GET     /api/v1/:suffix/commits/custom/:customField/:fromTime/to/:toTime controllers.ReportController.listCommitCustomField(suffix: DatabaseSuffix, customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
-GET     /api/v1/:suffix/commits/custom/loc/:customField/:fromTime/to/:toTime/csv controllers.ReportController.listCommitsLocCustomFieldCsv(suffix: DatabaseSuffix, customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
-GET     /api/v1/:suffix/commits/custom/loc/:customField/:fromTime/to/:toTime controllers.ReportController.listCommitLocCustomField(suffix: DatabaseSuffix, customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
-
+GET     /api/v1/commits             controllers.CommitController.list()
+GET     /api/v1/commits/:id         controllers.CommitController.info(id: Long)
+GET     /api/v1/commits/revision/:revision   controllers.CommitController.infoRevision(revision: Long)
+GET     /api/v1/commits/:from/to/:to   controllers.CommitController.infoDate(from: QueryLocalDate, to: QueryLocalDate)
+GET     /api/v1/commits/custom/:customField/:fromTime/to/:toTime/csv controllers.ReportController.listCommitsCustomFieldCsv(customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
+GET     /api/v1/commits/custom/:customField/:fromTime/to/:toTime controllers.ReportController.listCommitCustomField(customField: String, fromTime: QueryLocalDate, toTime: QueryLocalDate)
 #TASK
-GET     /api/v1/:suffix/tasks               controllers.TaskController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/tasks/:id           controllers.TaskController.info(suffix: DatabaseSuffix, id: Long)
-GET     /api/v1/:suffix/tasks/task/:taskId  controllers.TaskController.infoTaskId(suffix: DatabaseSuffix, taskId: Long)
-GET     /api/v1/:suffix/tasks/nested/:parentId  controllers.TaskController.infoParentId(suffix: DatabaseSuffix, parentId: Long)
+GET     /api/v1/tasks                   controllers.TaskController.list()
+GET     /api/v1/tasks/:id               controllers.TaskController.info(id: Long)
+GET     /api/v1/tasks/task/:taskId      controllers.TaskController.infoTaskId(taskId: Long)
+GET     /api/v1/tasks/nested/:parentId  controllers.TaskController.infoParentId(parentId: Long)
 
 # COMMIT TASKS
-GET     /api/v1/:suffix/committasks         controllers.CommitTaskController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/committasks/:id     controllers.CommitTaskController.info(suffix: DatabaseSuffix, id: Long)
+GET     /api/v1/committasks         controllers.CommitTaskController.list()
+GET     /api/v1/committasks/:id     controllers.CommitTaskController.info(id: Long)
 
 # COMMIT ENTRY FILES
-GET     /api/v1/:suffix/commitfiles         controllers.CommitEntryFileController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/commitfiles/:id     controllers.CommitEntryFileController.info(suffix: DatabaseSuffix, id: Long)
+GET     /api/v1/commitfiles         controllers.CommitEntryFileController.list()
+GET     /api/v1/commitfiles/:id     controllers.CommitEntryFileController.info(id: Long)
 
 # FILES
-GET     /api/v1/:suffix/files               controllers.EntryFileController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/files/bugs          controllers.ReportController.getFilesBugs(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/files/:id           controllers.EntryFileController.info(suffix: DatabaseSuffix, id: Long)
+GET     /api/v1/files               controllers.EntryFileController.list()
+GET     /api/v1/files/bugs          controllers.ReportController.getFilesBugs()
+GET     /api/v1/files/:id           controllers.EntryFileController.info(id: Long)
 
 # CUSTOM FIELDS
-GET     /api/v1/:suffix/customfields        controllers.CustomFieldsController.list(suffix: DatabaseSuffix)
-GET     /api/v1/:suffix/customfields/:id    controllers.CustomFieldsController.info(suffix: DatabaseSuffix, id: Long)
-GET     /api/v1/:suffix/customfields/field/:field    controllers.CustomFieldsController.listField(suffix: DatabaseSuffix, field: String)
+GET     /api/v1/customfields        controllers.CustomFieldsController.list()
+GET     /api/v1/customfields/:id    controllers.CustomFieldsController.info(id: Long)
+GET     /api/v1/customfields/field/:field    controllers.CustomFieldsController.listField(field: String)
 
 # DUMP
-GET     /api/v1/:suffix/dump/:from/to/:to  controllers.ReportController.dump(suffix: DatabaseSuffix, from: QueryLocalDate, to: QueryLocalDate)
-GET     /api/v1/:suffix/dump/:from/to/:to/csv        controllers.ReportController.dumpCsv(suffix: DatabaseSuffix, from: QueryLocalDate, to: QueryLocalDate)
+GET     /api/v1/dump/:from/to/:to  controllers.ReportController.dump(from: QueryLocalDate, to: QueryLocalDate)
+GET     /api/v1/dump/:from/to/:to/csv        controllers.ReportController.dumpCsv(from: QueryLocalDate, to: QueryLocalDate)
 
 # USERNAMES
 GET		/api/v1/usernames					controllers.UsersController.usernames
@@ -61,18 +58,8 @@ DELETE  /api/v1/account						controllers.AccountController.delete
 
 # GENERAL
 POST     /api/v1/updateall                  controllers.UpdateController.updateAll
-POST     /api/v1/update/:suffix             controllers.UpdateController.update(suffix: DatabaseSuffix)
-POST     /api/v1/:suffix/update/custom/:customField controllers.UpdateController.updateCustomFields(suffix: DatabaseSuffix, customField: String)
-
-### NoDocs ###
-POST    /boot/:magic                        controllers.BootController.createTables(magic: QueryMagic)
-
-### NoDocs ###
-POST    /boot/:suffix/:magic                controllers.BootController.createSuffixTables(suffix: DatabaseSuffix, magic: QueryMagic)
-
-# LOC
-POST     /api/v1/:suffix/loc                controllers.LocController.update(suffix: DatabaseSuffix)
-POST     /api/v1/:suffix/locxml             controllers.LocController.updateXml(suffix: DatabaseSuffix)
+POST     /api/v1/update                     controllers.UpdateController.update()
+POST     /api/v1/update/custom/:customField controllers.UpdateController.updateCustomFields(customField: String)
 
 # Map static resources from the /public folder to the /assets URL path
 ### NoDocs ###
