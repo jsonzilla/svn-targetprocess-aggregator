@@ -1,10 +1,10 @@
-import org.specs2.matcher._
 import api.Api._
 import api.ApiError._
+import org.specs2.matcher._
+import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.mvc.Result
 
 import scala.concurrent.Future
-import play.api.libs.json.{JsNull, JsValue, Json}
 
 class AuthControllerApiV1Spec extends ApiSpecification {
 

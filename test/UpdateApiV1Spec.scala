@@ -1,8 +1,8 @@
 import org.specs2.matcher._
+import play.api.libs.json.Json
 import play.api.mvc.Result
 
 import scala.concurrent.Future
-import play.api.libs.json.Json
 
 class UpdateApiV1Spec extends ApiSpecification {
 

@@ -1,11 +1,10 @@
-import ApplicationFixture.fixture
 import org.specs2.matcher.Scope
 import play.api.mvc.Result
 
 import scala.concurrent.Future
 
 class CommitFilesApiV1Spec extends ApiSpecification {
-  fixture.populate()
+  ApplicationFixture.initializeWithData()
 
   "/api commits files" should {
     s"return a list of commits files" in new Scope {

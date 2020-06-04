@@ -52,8 +52,7 @@ slick.dbs.testconfig.db = {
   keepAliveConnection = true
 }
 
-repos = ["demo_"]
-demo_ = {
+repo = {
   user = "user"
   pass = "pass"
   url = "https://svn..."

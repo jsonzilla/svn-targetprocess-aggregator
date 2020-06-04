@@ -30,16 +30,15 @@
         <!--</encoder>-->
     <!--</appender>-->
 
-<!--    <root level="info">-->
-<!--    <appender-ref ref="STDOUT" />-->
-<!--    </root>-->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
 
     <root level="error">
-    <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT" />
     </root>
 
 <!--     <root level="debug">-->
 <!--        <appender-ref ref="STDOUT" />-->
-    <!--<appender-ref ref="FILE" />-->
 <!--     </root>-->
 </configuration>

@@ -1,6 +1,4 @@
 # TheHand
-[![Build Status](https://travis-ci.org/amorvincitomnia/thehand.svg?branch=master)](https://travis-ci.org/amorvincitomnia/thehand)
-[![codecov](https://codecov.io/gh/0um/thehand/branch/doc/graph/badge.svg)](https://codecov.io/gh/amorvincitomnia/thehand)
 
 ## Requirements
 -   PostgresSQL [download](https://www.postgresql.org/download/)
@@ -32,8 +30,6 @@ dbconfig = {
   profile = ""
   driver = "org.postgresql.Driver"
   keepAliveConnection = true
-  users = "USERDBNAME"
-  password = "PASSDB"
   maxActive = 4
   maxConnections = 40
   numThreads = 10
@@ -49,7 +45,6 @@ projectDemo = {
   user = "YOUR USER"
   pass = "YOUR PASS"
   url = "YOUR SVN URL"
-  database_suffix = "demo_"
   task_model = {
     patternParser = "(#\\d)\\d+" //task or fix #NUMBER
     patternSplit = "#" //task or fix #NUMBER
@@ -78,13 +73,14 @@ target = {
  
 ### Devel
 ```bash
-> sbt run -Dconfig.file=/... path .../application.conf
+> sbt "-Dconfig.file=/... path .../application.conf
+$> run
 ```
 
 Examples to check the config
 ```bash
-> curl -v -X POST http://ip:9000/suffix_table_/YOUR_MAGIC_SECRET/
-> curl -v -X POST http://ip:9000/boot/suffix_table_/YOUR_MAGIC_SECRET/
+> curl -v -X POST http://ip:9000/YOUR_MAGIC_SECRET/
+> curl -v -X POST http://ip:9000/boot/YOUR_MAGIC_SECRET/
 > curl -v -X POST -H 'X-API-Key:AbCdEfGhIjK1' http://ip:9000/api/v1/update/suffix_table
 ```
 

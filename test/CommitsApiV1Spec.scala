@@ -1,11 +1,11 @@
-import ApplicationFixture.fixture
 import org.specs2.matcher.Scope
 import play.api.mvc.Result
 
 import scala.concurrent.Future
 
 class CommitsApiV1Spec extends ApiSpecification {
-  fixture.populate()
+  ApplicationFixture.initializeWithData()
+
   "/api commits" should {
     s"return a list of commits" in new Scope {
       val result: Future[Result] = routeGET(

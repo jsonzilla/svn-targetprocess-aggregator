@@ -92,10 +92,6 @@ object ExtractorFixture {
 
   val commitTaskChange = Seq(CommitTasks(1, 2, 1))
 
-  val apiKeys: Seq[ApiKey] = Seq(
-    ApiKey(apiKey = "AbCdEfGhIjK1", name = "ios-app", active = true),
-    ApiKey(apiKey = "AbCdEfGhIjK2", name = "android-app", active = true))
-
   val users: Seq[User] = Seq(
     User("user1@mail.com", "123456", "User 1", emailConfirmed = true, active = true, 1L),
     User("user2@mail.com", "123456", "User 2", emailConfirmed = true, active = true, 2L),

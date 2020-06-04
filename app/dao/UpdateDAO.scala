@@ -45,7 +45,7 @@ class UpdateDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
   }
 
   def updateAll(): Future[Seq[Int]] = {
-    updateRepositoryAuto
+    updateRepositoryAuto()
   }
 
   def updateCustomFields(field: String, from: Option[Long], to: Option[Long]): Future[Seq[Int]] = {

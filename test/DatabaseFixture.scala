@@ -32,9 +32,8 @@ class DatabaseFixture @Inject() (protected val dbConfigProvider: DatabaseConfigP
       once = false
 
       val daoBootstrap: BootDAO = Application.instanceCache[BootDAO].apply(app)
-      daoBootstrap.createSchemas()
+      daoBootstrap.boot()
       val insertAll = for {
-        _ <- daoApiKeys.insert(ExtractorFixture.apiKeys)
         _ <- daoUsers.insert(ExtractorFixture.users)
         _ <- daoTasks.insert(ExtractorFixture.extractTasks)
         _ <- daoCustomFields.insert(ExtractorFixture.customFields)

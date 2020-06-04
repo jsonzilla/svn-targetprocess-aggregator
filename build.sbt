@@ -1,4 +1,3 @@
-enablePlugins(SwaggerPlugin)
 enablePlugins(PlayScala)
 enablePlugins(JavaServerAppPackaging)
 
@@ -26,8 +25,7 @@ lazy val root = (project in file(".")).settings(
       "com.typesafe.play" %% "play-slick" % "5.0.0",
       "com.typesafe.play" %% "play-json-joda" % "2.8.1",
       specs2 % Test,
-      "org.specs2" %% "specs2-matcher-extra" % "4.9.4" % Test,
-      "org.webjars" % "swagger-ui" % "3.25.0"
+      "org.specs2" %% "specs2-matcher-extra" % "4.9.4" % Test
     )
   )
 
@@ -41,9 +39,7 @@ wixProductId := "ce07be71-510d-414a-92d4-dff47631848a"
 wixProductUpgradeId := "4552fb0e-e257-4dbd-9ecb-dba9dbacf424"
 
 routesImport += "models.QueryLocalDate"
-
-swaggerDomainNameSpaces := Seq("io.github.0um.models")
-swaggerPrettyJson := true
+routesImport += "models.QueryMagic"
 
 scalacOptions ++= Seq(                 // for scala 2.13
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.

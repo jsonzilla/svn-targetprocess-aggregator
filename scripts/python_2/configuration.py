@@ -5,6 +5,3 @@ class ConfServer:
     api = 'AbCdEfGhIjK1'
     magic = 'YOUR_MAGIC_SECRET'
 
-class ConfRepos:
-    res = ["demo_"]
-

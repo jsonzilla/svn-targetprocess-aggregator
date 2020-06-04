@@ -20,7 +20,11 @@ object RepoConf {
       conf.get[String]("repo.pass"))
   }
 
-  def repos(): Seq[String] = {
-    conf.getOptional[Seq[String]]("repos").getOrElse(Seq())
+  def magic() = {
+    conf.get[String]("boot.magic")
+  }
+
+  def first_api_key() = {
+    conf.get[String]("boot.first_api_key")
   }
 }

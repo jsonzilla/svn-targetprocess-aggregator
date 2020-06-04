@@ -1,11 +1,10 @@
-import ApplicationFixture.fixture
 import org.specs2.matcher.Scope
 import play.api.mvc.Result
 
 import scala.concurrent.Future
 
 class CustomFieldsApiV1Spec extends ApiSpecification {
-  fixture.populate()
+  ApplicationFixture.initializeWithData()
   "/api customfields" should {
     s"return a list of customfields" in new Scope {
       val result: Future[Result] = routeGET(

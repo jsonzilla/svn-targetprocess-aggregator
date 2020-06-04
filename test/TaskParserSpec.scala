@@ -9,8 +9,8 @@
  *
  */
 
-import org.specs2.mutable.Specification
 import org.specs2.matcher.{MatchResult, Matchers}
+import org.specs2.mutable.Specification
 import tasks.TaskParserOctothorpe
 
 class TaskParserSpec extends Specification with Matchers {

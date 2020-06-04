@@ -15,7 +15,7 @@ object ApplicationFixture {
   lazy val fixture: DatabaseFixture = Application.instanceCache[DatabaseFixture].apply(app)
 
   def initializeWithData() = {
-    daoBootstrap.createSchemas()
+    daoBootstrap.boot()
     fixture.populate()
   }
 }

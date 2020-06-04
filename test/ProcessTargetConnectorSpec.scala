@@ -1,7 +1,7 @@
+import models.{CustomFields, Task}
 import org.specs2.matcher.{MatchResult, Matchers}
 import org.specs2.mutable.Specification
 import tasks.{ProcessTargetConnector, TaskWithCustom}
-import models.{CustomFields, Task}
 
 class ProcessTargetConnectorSpec extends Specification with Matchers  {
   val processor: ProcessTargetConnector = ProcessTargetConnector(TaskConnectorFixture())

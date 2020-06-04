@@ -15,7 +15,6 @@ import org.specs2.concurrent.ExecutionEnv
 class UpdateDaoSpec(implicit ee: ExecutionEnv) extends ApiSpecification {
   ApplicationFixture.initializeWithData()
   private val fixture = ApplicationFixture.fixture
-  fixture.populate()
 
   "After populate db with fixture data" should {
     "list task table must have five tasks" in {
