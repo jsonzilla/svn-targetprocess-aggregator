@@ -3,8 +3,17 @@ package models
 import org.joda.time.DateTime
 import play.api.libs.json._
 
+/** A API Token
+ *
+ *  @constructor create a new api token entity.
+ *  @param token UUID 36 digits
+ *  @param apiKey the api key
+ *  @param expirationTime expiration date and time
+ *  @param userId foreign user id
+ *  @param id table id
+ */
 case class ApiToken(
-  token: String, // UUID 36 digits
+  token: String,
   apiKey: String,
   expirationTime: DateTime,
   userId: Long,
