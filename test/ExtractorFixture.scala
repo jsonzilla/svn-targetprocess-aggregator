@@ -59,12 +59,6 @@ object ExtractorFixture {
   val extractFiles: Seq[EntryFile] =
     Seq(EntryFile(file2), EntryFile(file2), EntryFile(file3), EntryFile(file1))
 
-  val lineCounterFiles = Seq(
-    FileCount(file1, 10),
-    FileCount(file2, 20),
-    FileCount(file3, 20)
-  )
-
   private val commitFilesOne = Seq(
     CommitEntryWriter(CommitEntryFile(Some('A'), None, Some(1), 0, 0), file1, ""),
     CommitEntryWriter(CommitEntryFile(Some('A'), None, Some(1), 0, 0), file2, ""),

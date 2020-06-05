@@ -15,7 +15,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
 
-//import scala.language.postfixOps
 import play.api.i18n.Langs
 
 class AuthController @Inject()

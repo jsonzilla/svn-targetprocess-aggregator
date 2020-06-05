@@ -3,11 +3,11 @@ enablePlugins(JavaServerAppPackaging)
 
 lazy val root = (project in file(".")).settings(
     inThisBuild(List(
-      organization := "io.github.0um",
+      organization := "io.gitlab.imperador",
       scalaVersion := "2.13.1",
-      version      := "0.1.7"
+      version      := "0.1.8"
     )),
-    name := "thehand",
+    name := "silencenoise",
     libraryDependencies ++= Seq(
       guice,
       "org.tmatesoft.svnkit" % "svnkit" % "1.10.1",
@@ -30,9 +30,9 @@ lazy val root = (project in file(".")).settings(
   )
 
 // general package information (can be scoped to Windows)
-maintainer := "Jeison Cardoso <cardoso.jeison@gmail.com>"
-packageSummary := "the-hand-windows"
-packageDescription := """The Hand Windows MSI."""
+maintainer := "Jeison Cardoso <cardoso@tutanota.com>"
+packageSummary := "silence_noise_windows"
+packageDescription := """Silence Noise Windows MSI."""
 
 // wix build information
 wixProductId := "ce07be71-510d-414a-92d4-dff47631848a"
