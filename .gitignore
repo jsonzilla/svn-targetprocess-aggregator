@@ -123,3 +123,5 @@ project/plugins/project/
 
 *.conf
 *.csv
+
+application.conf

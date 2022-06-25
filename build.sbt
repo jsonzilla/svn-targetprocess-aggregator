@@ -3,11 +3,11 @@ enablePlugins(JavaServerAppPackaging)
 
 lazy val root = (project in file(".")).settings(
     inThisBuild(List(
-      organization := "io.gitlab.imperador",
+      organization := "com.jsonzilla",
       scalaVersion := "2.13.1",
-      version      := "0.1.8"
+      version      := "0.1.9"
     )),
-    name := "silencenoise",
+    name := "svn-targetprocess-aggregator",
     libraryDependencies ++= Seq(
       guice,
       "org.tmatesoft.svnkit" % "svnkit" % "1.10.1",
@@ -30,8 +30,8 @@ lazy val root = (project in file(".")).settings(
   )
 
 // general package information (can be scoped to Windows)
-maintainer := "Jeison Cardoso <cardoso@tutanota.com>"
-packageSummary := "silence_noise_windows"
+maintainer := "Jeison Cardoso"
+packageSummary := "svn-targetprocess-aggregator_windows"
 packageDescription := """Silence Noise Windows MSI."""
 
 // wix build information
