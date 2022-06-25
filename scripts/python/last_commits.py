@@ -1,7 +1,4 @@
-import os
 import requests
-from datetime import datetime
-from datetime import timedelta
 
 from configuration import ConfServer
 
@@ -15,6 +12,6 @@ headers = {
     'cache-control': "no-cache"
     }
 
-url = "http://"+ConfServer.ip+":"+ConfServer.port+"/api/v1/commits" 
+url = "http://"+ConfServer.ip+":"+ConfServer.port+"/api/v1/commits"
 response = requests.request("GET", url, headers=headers)
 print(response.text)
